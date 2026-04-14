@@ -54,7 +54,7 @@ function ResultsContent() {
                 <div className="flex flex-col items-center gap-6 text-center">
                     <Dna className="w-16 h-16 text-primary animate-spin opacity-20" />
                     <div className="space-y-2">
-                        <h1 className="text-2xl font-bold font-mono uppercase tracking-tighter">Initializing CORE Engine...</h1>
+                        <h1 className="text-2xl font-bold font-mono uppercase tracking-tighter">Initializing Analysis...</h1>
                         <p className="text-muted-foreground italic text-sm">Waiting for sequence data synchronization...</p>
                     </div>
                     <Button variant="outline" onClick={() => router.push('/analyze')}>Back to Entry</Button>
