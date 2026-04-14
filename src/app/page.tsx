@@ -33,7 +33,7 @@ export default function HomePage() {
         <div className="max-w-4xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono font-medium mb-8">
             <Activity className="w-3 h-3" />
-            ADVANCED SEQUENCING v1.0.4
+            BIOINFORMATICS PLATFORM
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1]">
@@ -103,7 +103,7 @@ export default function HomePage() {
       <footer className="border-t py-12 bg-muted/30">
         <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="text-sm text-muted-foreground font-mono">
-            &copy; 2024 BioSeq Portal // v1.0.4.52 // Build: SECUNDUS
+            &copy; 2024 BioSeq Portal
           </div>
           <div className="flex gap-8 text-sm font-medium text-muted-foreground">
             <a href="#" className="hover:text-primary">Research Paper</a>

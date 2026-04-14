@@ -85,7 +85,7 @@ export default function AnalyzePage() {
             router.push(`/results?id=${analysisResult.id}`);
         } catch (error: any) {
             console.error('ANALYSIS_ERROR:', error);
-            toast.error(error.message || 'The CORE engine encountered an error during analysis.');
+            toast.error(error.message || 'An error occurred during analysis.');
         } finally {
             setAnalyzing(false);
         }

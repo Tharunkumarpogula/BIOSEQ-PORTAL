@@ -166,7 +166,7 @@ function ResultsContent() {
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
                                 <Badge variant="secondary" className="bg-primary/5 text-primary rounded-sm font-mono tracking-wider border-primary/10">ANALYSIS COMPLETED // REF_{result.id}</Badge>
-                                <Badge variant="outline" className="text-[10px] uppercase tracking-widest border-primary/20 text-muted-foreground">PRODUCTION BUILD SECUNDUS</Badge>
+                                <Badge variant="outline" className="text-[10px] uppercase tracking-widest border-primary/20 text-muted-foreground">PRODUCTION BUILD</Badge>
                             </div>
                             <h1 className="text-5xl font-black tracking-tighter uppercase">{result.name}</h1>
                             <div className="flex items-center gap-6 text-sm text-muted-foreground italic font-medium">

@@ -157,7 +157,7 @@ export default function ProfilePage() {
                                 </div>
                                 <div className="font-mono text-[10px] text-muted-foreground/60 space-y-1 italic">
                                     <div>{'> system.status: ENCRYPTED'}</div>
-                                    <div>{'> node.origin: SECUNDUS_CLIENT'}</div>
+                                    <div>{'> node.origin: BIOSEQ_PORTAL'}</div>
                                     <div>{'> session.token: ACTIVE'}</div>
                                 </div>
                             </div>

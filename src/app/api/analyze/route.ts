@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json(analysis);
     } catch (error) {
-        console.error('SECUNDUS_RUNTIME_ERROR:', error);
+        console.error('ANALYSIS_ERROR:', error);
         return NextResponse.json({ error: 'Internal Core Analysis Failure' }, { status: 500 });
     }
 }
@@ -23,7 +23,7 @@ export async function GET() {
     return NextResponse.json({
         status: 'SYSTEM_OPERATIONAL',
         version: '1.0.4.52',
-        engine: 'SECUNDUS_CORE',
+        engine: 'BIOSEQ_ANALYSIS',
         uptime: process.uptime()
     });
 }
