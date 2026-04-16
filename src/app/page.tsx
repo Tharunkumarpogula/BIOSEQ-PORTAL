@@ -94,7 +94,7 @@ export default function HomePage() {
         {/* Visual Element: Floating Sequence Decoration */}
         <div className="absolute right-[-10%] top-[30%] opacity-[0.015] font-mono text-8xl select-none pointer-events-none max-w-[200px] leading-none tracking-tighter hidden xl:block">
           {Array.from({ length: 40 }).map((_, i) => (
-            <div key={i}>{"ATGC".charAt(Math.floor(Math.random() * 4))}</div>
+            <div key={i}>{"ATGC".charAt(i % 4)}</div>
           ))}
         </div>
       </main>

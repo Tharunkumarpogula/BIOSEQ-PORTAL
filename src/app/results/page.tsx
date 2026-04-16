@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useEffect, useState, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import { Dna, Download, Copy, Share2, Search, Terminal, Activity, FileDown, Layers, ChevronLeft, MapPin, Gauge, Microscope, ArrowRight, Mail, Link2, FileJson, FileSpreadsheet, FileText, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -31,22 +31,21 @@ import PyMOLViewer from '@/components/pymol-viewer';
 function ResultsContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [result, setResult] = useState<AnalysisResult | null>(null);
-    const [showShareMenu, setShowShareMenu] = useState(false);
-    const id = searchParams.get('id');
+    const [result] = useState<AnalysisResult | null>(() => {
+        if (typeof window === 'undefined') return null;
 
-    useEffect(() => {
         // Fetch the full analysis results from session storage
         const rawData = sessionStorage.getItem('lastAnalysisResult');
-        if (rawData) {
-            try {
-                const analysisResult = JSON.parse(rawData);
-                setResult(analysisResult);
-            } catch (err) {
-                console.error('Failed to parse analysis result:', err);
-            }
+        if (!rawData) return null;
+
+        try {
+            return JSON.parse(rawData) as AnalysisResult;
+        } catch (err) {
+            console.error('Failed to parse analysis result:', err);
+            return null;
         }
-    }, [id]);
+    });
+    const [showShareMenu, setShowShareMenu] = useState(false);
 
     if (!result) {
         return (
@@ -364,7 +363,7 @@ function ResultsContent() {
                                         {['A', 'T', 'G', 'C'].map((base) => (
                                             <div key={base} className="p-4 rounded-lg bg-muted/20 border border-primary/5 flex flex-col items-center">
                                                 <span className="text-[10px] font-bold font-mono text-muted-foreground uppercase tracking-widest mb-1">{base}_BIAS</span>
-                                                <span className="text-lg font-black font-mono italic text-primary">{(Math.random() * 30 + 10).toFixed(1)}%</span>
+                                                <span className="text-lg font-black font-mono italic text-primary">{(((base.charCodeAt(0) * 7) % 30) + 10).toFixed(1)}%</span>
                                             </div>
                                         ))}
                                     </div>

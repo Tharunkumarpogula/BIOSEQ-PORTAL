@@ -320,7 +320,7 @@ export default function PyMOLViewer({ result, className }: PyMOLViewerProps) {
             {/* Installation Guide */}
             <Card className="glass-dark border-primary/10">
                 <CardHeader>
-                    <CardTitle className="text-lg font-bold">Don't have PyMOL?</CardTitle>
+                    <CardTitle className="text-lg font-bold">Don&apos;t have PyMOL?</CardTitle>
                     <CardDescription>
                         PyMOL is a powerful molecular visualization system available for Windows, Mac, and Linux
                     </CardDescription>

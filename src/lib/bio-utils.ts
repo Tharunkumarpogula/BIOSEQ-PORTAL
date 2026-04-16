@@ -87,7 +87,7 @@ export const findRestrictionSites = (seq: string) => {
     RESTRICTION_ENZYMES.forEach(enzyme => {
         // Basic support for degenerate bases could be added here, currently literal match
         // Handling GTYRAC (Y=C/T, R=A/G)
-        let regexStr = enzyme.sequence
+        const regexStr = enzyme.sequence
             .replace(/R/g, '[AG]')
             .replace(/Y/g, '[CT]')
             .replace(/N/g, '[ATGC]');
@@ -194,8 +194,8 @@ export const performFullAnalysis = async (name: string, inputSequence: string): 
         unproData = await fetchUniProtData(finalName || sequence.substring(0, 30));
         // Try to find a cross-referenced PDB ID
         if (unproData?.uniProtKBCrossReferences) {
-            const pdbRef = unproData.uniProtKBCrossReferences.find((ref: any) => ref.database === 'PDB');
-            if (pdbRef) pdbId = pdbRef.id;
+            const pdbRef = unproData.uniProtKBCrossReferences.find((ref: { database?: string; id?: string }) => ref.database === 'PDB');
+            if (pdbRef?.id) pdbId = pdbRef.id;
         }
     } else if (type === 'DNA' || type === 'RNA') {
         // For DNA/RNA, we could potentially find structures too, but let's stick to Proteins for now

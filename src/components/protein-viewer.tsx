@@ -13,14 +13,24 @@ interface ProteinViewerProps {
 export default function ProteinViewer({ pdbId = '1hbb', className }: ProteinViewerProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const stageRef = useRef<Stage | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+
+    type NglComponent = {
+        structure?: { atomCount: number };
+        removeAllRepresentations: () => void;
+        addRepresentation: (type: string, params?: Record<string, unknown>) => void;
+    };
+
+    const cleanPdbId = pdbId.trim().toUpperCase();
+    const [loadedPdbId, setLoadedPdbId] = useState<string | null>(null);
+    const [error, setError] = useState<{ pdbId: string; message: string } | null>(null);
+
+    const isLoading = loadedPdbId !== cleanPdbId && error?.pdbId !== cleanPdbId;
+    const errorMessage = error?.pdbId === cleanPdbId ? error.message : null;
 
     useEffect(() => {
         if (!containerRef.current) return;
 
-        setLoading(true);
-        setError(null);
+        let disposed = false;
 
         // NGL Stage settings
         const stage = new Stage(containerRef.current, {
@@ -28,60 +38,64 @@ export default function ProteinViewer({ pdbId = '1hbb', className }: ProteinView
         });
         stageRef.current = stage;
 
-        const cleanPdbId = pdbId.trim().toUpperCase();
+        stage.loadFile(`rcsb://${cleanPdbId}`)
+            .then((component) => {
+                if (disposed) return;
 
-        stage.loadFile(`rcsb://${cleanPdbId}`).then((component: any) => {
-            if (!component || !component.structure) throw new Error("Component not created");
-            
-            // Wait for NGL to settle internal state
-            setTimeout(() => {
-                if (!stageRef.current) return;
-                try {
-                    // Remove any existing representations just in case
-                    component.removeAllRepresentations();
+                const nglComponent = component as NglComponent;
+                if (!nglComponent || !nglComponent.structure) throw new Error("Component not created");
 
-                    component.addRepresentation('cartoon', { 
-                        color: 'teal', 
-                        opacity: 0.8,
-                        quality: 'medium'
-                    });
-                    
-                    if (component.structure.atomCount < 20000) {
-                        component.addRepresentation('ball+stick', {
-                            sele: 'hetero and not water',
-                            colorValue: 'green'
-                        });
-                    }
-                    
-                    stage.autoView();
-                    setLoading(false);
-                } catch (repErr) {
-                    console.error('NGL Representation Crash:', repErr);
-                    // Single fallback representation
+                // Wait for NGL to settle internal state
+                setTimeout(() => {
+                    if (disposed || !stageRef.current) return;
                     try {
-                        component.addRepresentation('line'); 
-                        setLoading(false);
-                    } catch (e) {
-                        setError('Visualization engine failure.');
-                        setLoading(false);
+                        // Remove any existing representations just in case
+                        nglComponent.removeAllRepresentations();
+
+                        nglComponent.addRepresentation('cartoon', {
+                            color: 'teal',
+                            opacity: 0.8,
+                            quality: 'medium'
+                        });
+
+                        if ((nglComponent.structure?.atomCount ?? 0) < 20000) {
+                            nglComponent.addRepresentation('ball+stick', {
+                                sele: 'hetero and not water',
+                                colorValue: 'green'
+                            });
+                        }
+
+                        stage.autoView();
+                        setError(null);
+                        setLoadedPdbId(cleanPdbId);
+                    } catch (repErr) {
+                        console.error('NGL Representation Crash:', repErr);
+                        // Single fallback representation
+                        try {
+                            nglComponent.addRepresentation('line');
+                            setError(null);
+                            setLoadedPdbId(cleanPdbId);
+                        } catch (e) {
+                            setError({ pdbId: cleanPdbId, message: 'Visualization engine failure.' });
+                        }
                     }
-                }
-            }, 250);
-        }).catch((err) => {
-            console.error('NGL Load Error:', err);
-            setError('Structure visualization unavailable.');
-            setLoading(false);
-        });
+                }, 250);
+            })
+            .catch((err) => {
+                console.error('NGL Load Error:', err);
+                if (!disposed) setError({ pdbId: cleanPdbId, message: 'Structure visualization unavailable.' });
+            });
 
         const handleResize = () => stage.handleResize();
         window.addEventListener('resize', handleResize);
 
         return () => {
+            disposed = true;
             window.removeEventListener('resize', handleResize);
             stage.dispose();
             stageRef.current = null;
         };
-    }, [pdbId]);
+    }, [cleanPdbId]);
 
     const resetView = () => {
         if (stageRef.current) stageRef.current.autoView();
@@ -91,16 +105,16 @@ export default function ProteinViewer({ pdbId = '1hbb', className }: ProteinView
         <div className={`relative rounded-2xl overflow-hidden border border-primary/10 bg-black/40 shadow-2xl group ${className}`}>
             <div ref={containerRef} className="w-full h-full min-h-[400px]" />
 
-            {loading && (
+            {isLoading && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm z-10">
                     <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
                     <p className="text-xs font-mono text-muted-foreground animate-pulse uppercase tracking-widest">Rendering Molecular Geometry...</p>
                 </div>
             )}
 
-            {error && (
+            {errorMessage && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm z-10">
-                    <p className="text-sm font-mono text-red-400 uppercase tracking-widest">{error}</p>
+                    <p className="text-sm font-mono text-red-400 uppercase tracking-widest">{errorMessage}</p>
                 </div>
             )}
 

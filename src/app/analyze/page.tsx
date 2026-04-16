@@ -83,9 +83,10 @@ export default function AnalyzePage() {
             
             toast.success('Core analysis complete!');
             router.push(`/results?id=${analysisResult.id}`);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('ANALYSIS_ERROR:', error);
-            toast.error(error.message || 'An error occurred during analysis.');
+            const message = error instanceof Error ? error.message : 'An error occurred during analysis.';
+            toast.error(message);
         } finally {
             setAnalyzing(false);
         }
@@ -170,7 +171,7 @@ export default function AnalyzePage() {
                     <Card className="glass dark:glass-dark border-primary/10 overflow-hidden shadow-2xl">
                         <CardHeader className="bg-muted/30 border-b">
                             <div className="flex items-center gap-2 mb-2 italic text-xs font-mono text-muted-foreground">
-                                <Terminal className="w-3 h-3" /> // INPUT_PROTOCOL v2.1
+                                <Terminal className="w-3 h-3" /> {"// INPUT_PROTOCOL v2.1"}
                             </div>
                             <CardTitle>Sequence Integration</CardTitle>
                             <CardDescription>Enter sequence data below for comprehensive analysis.</CardDescription>
